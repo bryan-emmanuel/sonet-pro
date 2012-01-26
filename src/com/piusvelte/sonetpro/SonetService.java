@@ -100,7 +100,6 @@ import android.widget.RemoteViews;
 
 public class SonetService extends Service {
 	private static final String TAG = "SonetService";
-	private static final int[] map_icons = new int[]{R.drawable.twitter, R.drawable.facebook, R.drawable.myspace, R.drawable.buzz, R.drawable.foursquare, R.drawable.linkedin, R.drawable.sms, R.drawable.rss, R.drawable.identica, R.drawable.googleplus, R.drawable.salesforce};
 	private final static HashMap<Integer, AsyncTask<Integer, String, Integer>> mStatusesLoaders = new HashMap<Integer, AsyncTask<Integer, String, Integer>>();
 	private final ArrayList<AsyncTask<SmsMessage, String, int[]>> mSMSLoaders = new ArrayList<AsyncTask<SmsMessage, String, int[]>>();
 	private AlarmManager mAlarmManager;

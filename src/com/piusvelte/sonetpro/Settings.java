@@ -176,6 +176,7 @@ public class Settings extends Activity implements View.OnClickListener, OnChecke
 		mDisplay_profile.setOnCheckedChangeListener(this);
 		mMargin.setOnClickListener(this);
 		mProfiles_bg_color.setOnClickListener(this);
+		mInstantUpload.setOnCheckedChangeListener(this);
 
 		if (scrollableVersion == 1) {
 			mMessages_color.setEnabled(false);

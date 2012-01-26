@@ -68,7 +68,7 @@ public class SonetProvider extends ContentProvider {
 	protected static final String TABLE_ACCOUNTS = "accounts";
 	private static HashMap<String, String> accountsProjectionMap;
 
-	private static final String TABLE_WIDGETS = "widgets";
+	protected static final String TABLE_WIDGETS = "widgets";
 	private static HashMap<String, String> widgetsProjectionMap;
 
 	private static final String TABLE_STATUSES = "statuses";

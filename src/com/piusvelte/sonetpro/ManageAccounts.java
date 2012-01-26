@@ -21,16 +21,19 @@ package com.piusvelte.sonetpro;
 
 import static com.piusvelte.sonetpro.Sonet.ACTION_REFRESH;
 import static com.piusvelte.sonetpro.Sonet.RESULT_REFRESH;
-import static com.piusvelte.sonetpro.Sonet.ACCOUNTS_QUERY;
 import static com.piusvelte.sonetpro.Sonet.RSS;
 import static com.piusvelte.sonetpro.Sonet.SMS;
+import static com.piusvelte.sonetpro.Sonet.sBFOptions;
+import static com.piusvelte.sonetpro.Sonet.map_icons;
 import static com.piusvelte.sonetpro.SonetProvider.TABLE_WIDGET_ACCOUNTS;
 import static com.piusvelte.sonetpro.SonetProvider.TABLE_ACCOUNTS;
+import static com.piusvelte.sonetpro.SonetProvider.TABLE_WIDGETS;
 
 import com.piusvelte.sonetpro.Sonet.Accounts;
 import com.piusvelte.sonetpro.Sonet.Notifications;
 import com.piusvelte.sonetpro.Sonet.Status_links;
 import com.piusvelte.sonetpro.Sonet.Statuses;
+import com.piusvelte.sonetpro.Sonet.Statuses_styles;
 import com.piusvelte.sonetpro.Sonet.Widget_accounts;
 import com.piusvelte.sonetpro.Sonet.Widgets;
 
@@ -41,6 +44,10 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -49,9 +56,10 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class ManageAccounts extends ListActivity implements OnClickListener, DialogInterface.OnClickListener {
@@ -94,17 +102,83 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 	private final SimpleCursorAdapter.ViewBinder mViewBinder = new SimpleCursorAdapter.ViewBinder() {
 		@Override
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-			if (columnIndex == cursor.getColumnIndex(Widget_accounts.WIDGET)) {
-				((CheckBox) view).setChecked(cursor.getInt(columnIndex) == 1);
+			if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND)) {
+				((TextView) view).setText(cursor.getString(columnIndex));
 				return true;
-			} else return false;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
+				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE)) {
+				((TextView) view).setText(cursor.getString(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
+				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.STATUS_BG)) {
+				Bitmap bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
+				Canvas canvas = new Canvas(bmp);
+				canvas.drawColor(cursor.getInt(columnIndex));
+				((ImageView) view).setImageBitmap(bmp);
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.PROFILE)) {
+				byte[] b = cursor.getBlob(columnIndex);
+				Bitmap bmp = null;
+				if (b != null) {
+					bmp = BitmapFactory.decodeByteArray(b, 0, b.length, sBFOptions);
+					if (bmp != null) {
+						((ImageView) view).setImageBitmap(bmp);
+					}
+				}
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND + "2")) {
+				((TextView) view).setText(cursor.getString(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATEDTEXT)) {
+				((TextView) view).setText(cursor.getString(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE + "2")) {
+				((TextView) view).setText(cursor.getString(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_COLOR)) {
+				((TextView) view).setTextColor(cursor.getInt(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_COLOR)) {
+				((TextView) view).setTextColor(cursor.getInt(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_COLOR)) {
+				((TextView) view).setTextColor(cursor.getInt(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
+				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_TEXTSIZE)) {
+				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
+				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.ICON)) {
+				Bitmap bmp = BitmapFactory.decodeResource(getResources(), map_icons[cursor.getInt(columnIndex)], sBFOptions);
+				if (bmp != null) {
+					((ImageView) view).setImageBitmap(bmp);
+				}
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.PROFILE_BG)) {
+				Bitmap bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
+				Canvas canvas = new Canvas(bmp);
+				canvas.drawColor(cursor.getInt(columnIndex));
+				((ImageView) view).setImageBitmap(bmp);
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
-
+	
 	@Override
 	protected void onListItemClick(ListView list, final View view, int position, final long id) {
 		super.onListItemClick(list, view, position, id);
-		final CharSequence[] items = {getString(R.string.re_authenticate), getString(R.string.account_settings), getString(((CheckBox) view.findViewById(R.id.isenabled)).isChecked() ? R.string.disable : R.string.enable)};
+		final CharSequence[] items = {getString(R.string.re_authenticate), getString(R.string.account_settings), getString(((TextView) view.findViewById(R.id.created)).getText().toString().contains("enabled") ? R.string.disable : R.string.enable)};
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		dialog.setItems(items, new DialogInterface.OnClickListener() {
 			@Override
@@ -128,7 +202,7 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 					startActivityForResult(new Intent(ManageAccounts.this, AccountSettings.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId).putExtra(Sonet.EXTRA_ACCOUNT_ID, id), RESULT_REFRESH);
 					break;
 				case ENABLE_ID:
-					if (((CheckBox) view.findViewById(R.id.isenabled)).isChecked()) {
+					if (((TextView) view.findViewById(R.id.created)).getText().toString().contains("enabled")) {
 						// disable the account, remove settings and statuses
 						getContentResolver().delete(Widgets.CONTENT_URI, Widgets.ACCOUNT + "=? and " + Widgets.WIDGET + "=?", new String[]{Long.toString(id), Integer.toString(mAppWidgetId)});
 						getContentResolver().delete(Widget_accounts.CONTENT_URI, Widget_accounts.ACCOUNT + "=? and " + Widget_accounts.WIDGET + "=?", new String[]{Long.toString(id), Integer.toString(mAppWidgetId)});
@@ -225,8 +299,81 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 	private void listAccounts() {
 		// list all accounts, checking the checkbox if they are enabled for this widget
 		// prepend service name to username
-		Cursor c = this.managedQuery(Accounts.CONTENT_URI, new String[]{Accounts._ID, ACCOUNTS_QUERY, "case when (select " + Widget_accounts.WIDGET + " from " + TABLE_WIDGET_ACCOUNTS + " where " + Widget_accounts.WIDGET + "=" + mAppWidgetId + " and " + Widget_accounts.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1) is null then 0 else 1 end as " + Widget_accounts.WIDGET}, null, null, null);
-		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.accounts_row, c, new String[] {Accounts.USERNAME, Widget_accounts.WIDGET}, new int[] {R.id.account_username, R.id.isenabled});
+		
+		Cursor c = this.managedQuery(Accounts.CONTENT_URI, new String[]{
+				TABLE_ACCOUNTS + "." + Accounts._ID,
+				
+				"(case when " + Accounts.SERVICE + "=" + Sonet.TWITTER + " then 'Twitter: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.FACEBOOK + " then 'Facebook: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.MYSPACE + " then 'MySpace: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.BUZZ + " then 'Buzz: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.LINKEDIN + " then 'LinkedIn: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.FOURSQUARE + " then 'Foursquare: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.CHATTER + " then 'Chatter: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.RSS + " then 'RSS: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.IDENTICA + " then 'Identi.ca: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.GOOGLEPLUS + " then 'Google+: ' else '' end) as " + Statuses_styles.FRIEND,
+				
+				"(case when " + Accounts.SERVICE + "=" + Sonet.TWITTER + " then 'Twitter: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.FACEBOOK + " then 'Facebook: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.MYSPACE + " then 'MySpace: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.BUZZ + " then 'Buzz: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.LINKEDIN + " then 'LinkedIn: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.FOURSQUARE + " then 'Foursquare: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.CHATTER + " then 'Chatter: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.RSS + " then 'RSS: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.IDENTICA + " then 'Identi.ca: ' when "
+				+ Accounts.SERVICE + "=" + Sonet.GOOGLEPLUS + " then 'Google+: ' else '' end) as " + Statuses_styles.FRIEND + "2",
+				
+				"(case when (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.DISPLAY_PROFILE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else 1 end) as " + Statuses_styles.PROFILE,
+				
+				"(case when (select " + Widget_accounts.WIDGET + " from " + TABLE_WIDGET_ACCOUNTS + " where " + Widget_accounts.WIDGET + "=" + mAppWidgetId + " and " + Widget_accounts.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1) is null then 'this account is disabled for this widget, select to enable' else 'account is enabled for this widget, select to change settings' end) as " + Statuses_styles.MESSAGE,
+				
+				"(case when (select " + Widget_accounts.WIDGET + " from " + TABLE_WIDGET_ACCOUNTS + " where " + Widget_accounts.WIDGET + "=" + mAppWidgetId + " and " + Widget_accounts.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1) is null then 'this account is disabled for this widget, select to enable' else 'account is enabled for this widget, select to change settings' end) as " + Statuses_styles.MESSAGE + "2",
+				
+				Accounts.USERNAME + " as " + Statuses_styles.CREATEDTEXT,
+
+				"(case when (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_message_color + " end) as " + Statuses_styles.MESSAGES_COLOR,
+
+				"(case when (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_friend_color + " end) as " + Statuses_styles.FRIEND_COLOR,
+
+				"(case when (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.CREATED_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_created_color + " end) as " + Statuses_styles.CREATED_COLOR,
+
+				"(case when (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_messages_textsize + " end) as " + Statuses_styles.MESSAGES_TEXTSIZE,
+
+				"(case when (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_friend_textsize + " end) as " + Statuses_styles.FRIEND_TEXTSIZE,
+
+				"(case when (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.CREATED_TEXTSIZE + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_created_textsize + " end) as " + Statuses_styles.CREATED_TEXTSIZE,
+
+				"(case when (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.STATUS_BG,
+
+				Accounts.SERVICE + " as " + Statuses_styles.ICON
+		}, null, null, null);
+		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon});
 		sca.setViewBinder(mViewBinder);
 		setListAdapter(sca);
 	}

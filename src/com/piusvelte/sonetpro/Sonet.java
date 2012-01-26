@@ -52,6 +52,8 @@ public class Sonet {
 	protected static final int RESULT_REFRESH = 1;
 	protected static int NOTIFY_ID = 1;
 
+	protected static final int[] map_icons = new int[]{R.drawable.twitter, R.drawable.facebook, R.drawable.myspace, R.drawable.buzz, R.drawable.foursquare, R.drawable.linkedin, R.drawable.sms, R.drawable.rss, R.drawable.identica, R.drawable.googleplus, R.drawable.salesforce};
+
 	protected static final int TWITTER = 0;
 	protected static final String TWITTER_BASE_URL = "http://api.twitter.com/";
 	protected static final String TWITTER_URL_REQUEST = "%soauth/request_token";
