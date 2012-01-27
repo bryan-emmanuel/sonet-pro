@@ -22,6 +22,7 @@ package com.piusvelte.sonetpro;
 import java.util.HashMap;
 
 import com.piusvelte.sonetpro.Sonet.Accounts;
+import com.piusvelte.sonetpro.Sonet.Accounts_styles;
 import com.piusvelte.sonetpro.Sonet.Notifications;
 import com.piusvelte.sonetpro.Sonet.Status_links;
 import com.piusvelte.sonetpro.Sonet.Widget_accounts;
@@ -61,6 +62,7 @@ public class SonetProvider extends ContentProvider {
 	protected static final int WIDGETS_SETTINGS = 9;
 	protected static final int DISTINCT_WIDGETS_SETTINGS = 10;
 	protected static final int STATUS_LINKS = 11;
+	private static final int ACCOUNTS_STYLES_VIEW = 12;
 
 	private static final String DATABASE_NAME = "sonet.db";
 	private static final int DATABASE_VERSION = 24;
@@ -95,6 +97,8 @@ public class SonetProvider extends ContentProvider {
 
 	protected static final String TABLE_STATUS_LINKS = "status_links";
 	private static HashMap<String, String> status_linksProjectionMap;
+	
+	private static final String ACCOUNTS_STYLES = "accounts_styles";
 
 	private DatabaseHelper mDatabaseHelper;
 
@@ -102,6 +106,7 @@ public class SonetProvider extends ContentProvider {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 		sUriMatcher.addURI(AUTHORITY, TABLE_ACCOUNTS, ACCOUNTS);
+		sUriMatcher.addURI(AUTHORITY, ACCOUNTS_STYLES, ACCOUNTS_STYLES_VIEW);
 
 		accountsProjectionMap = new HashMap<String, String>();
 		accountsProjectionMap.put(Accounts._ID, Accounts._ID);
@@ -280,6 +285,8 @@ public class SonetProvider extends ContentProvider {
 			return Widgets_settings.CONTENT_TYPE;
 		case STATUS_LINKS:
 			return Status_links.CONTENT_TYPE;
+		case ACCOUNTS_STYLES_VIEW:
+			return Accounts_styles.CONTENT_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -461,6 +468,10 @@ public class SonetProvider extends ContentProvider {
 		case STATUS_LINKS:
 			qb.setTables(TABLE_STATUS_LINKS);
 			qb.setProjectionMap(status_linksProjectionMap);
+			break;
+		case ACCOUNTS_STYLES_VIEW:
+			qb.setTables(TABLE_ACCOUNTS);
+			qb.setProjectionMap(statuses_stylesProjectionMap);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);

@@ -30,6 +30,7 @@ import static com.piusvelte.sonetpro.SonetProvider.TABLE_ACCOUNTS;
 import static com.piusvelte.sonetpro.SonetProvider.TABLE_WIDGETS;
 
 import com.piusvelte.sonetpro.Sonet.Accounts;
+import com.piusvelte.sonetpro.Sonet.Accounts_styles;
 import com.piusvelte.sonetpro.Sonet.Notifications;
 import com.piusvelte.sonetpro.Sonet.Status_links;
 import com.piusvelte.sonetpro.Sonet.Statuses;
@@ -39,6 +40,7 @@ import com.piusvelte.sonetpro.Sonet.Widgets;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -97,6 +99,10 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 		((Button) findViewById(R.id.default_widget_settings)).setOnClickListener(this);
 		((Button) findViewById(R.id.button_add_account)).setOnClickListener(this);
 		((Button) findViewById(R.id.save)).setOnClickListener(this);
+		
+		WallpaperManager wm = WallpaperManager.getInstance(getApplicationContext());
+		findViewById(R.id.save).getRootView().setBackgroundDrawable(wm.getDrawable());
+		
 	}
 
 	private final SimpleCursorAdapter.ViewBinder mViewBinder = new SimpleCursorAdapter.ViewBinder() {
@@ -121,13 +127,9 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 				((ImageView) view).setImageBitmap(bmp);
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.PROFILE)) {
-				byte[] b = cursor.getBlob(columnIndex);
-				Bitmap bmp = null;
-				if (b != null) {
-					bmp = BitmapFactory.decodeByteArray(b, 0, b.length, sBFOptions);
-					if (bmp != null) {
-						((ImageView) view).setImageBitmap(bmp);
-					}
+				Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_contact_picture, sBFOptions);
+				if (bmp != null) {
+					((ImageView) view).setImageBitmap(bmp);
 				}
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND + "2")) {
@@ -300,8 +302,8 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 		// list all accounts, checking the checkbox if they are enabled for this widget
 		// prepend service name to username
 		
-		Cursor c = this.managedQuery(Accounts.CONTENT_URI, new String[]{
-				TABLE_ACCOUNTS + "." + Accounts._ID,
+		Cursor c = this.managedQuery(Accounts_styles.CONTENT_URI, new String[]{
+				Accounts._ID,
 				
 				"(case when " + Accounts.SERVICE + "=" + Sonet.TWITTER + " then 'Twitter: ' when "
 				+ Accounts.SERVICE + "=" + Sonet.FACEBOOK + " then 'Facebook: ' when "
@@ -371,9 +373,14 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 				+ "when (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.MESSAGES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
 				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.STATUS_BG,
 
-				Accounts.SERVICE + " as " + Statuses_styles.ICON
+				Accounts.SERVICE + " as " + Statuses_styles.ICON,
+				
+				"(case when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.PROFILE_BG
 		}, null, null, null);
-		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon});
+		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon, R.id.profile_bg});
 		sca.setViewBinder(mViewBinder);
 		setListAdapter(sca);
 	}

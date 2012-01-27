@@ -439,6 +439,17 @@ public class Sonet {
 		
 	}
 
+	public static final class Accounts_styles implements BaseColumns  {
+
+		private Accounts_styles() {
+		}
+
+		public static final Uri CONTENT_URI = Uri.parse("content://" + SonetProvider.AUTHORITY + "/accounts_styles");
+
+		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.piusvelte.accounts_styles";
+		
+	}
+	
 	public static final class Statuses implements BaseColumns {
 
 		private Statuses() {
