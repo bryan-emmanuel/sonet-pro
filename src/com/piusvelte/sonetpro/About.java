@@ -181,15 +181,11 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 			if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.STATUS_BG)) {
 				byte[] b = cursor.getBlob(columnIndex);
@@ -213,30 +209,18 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND + "2")) {
 				((TextView) view).setText(cursor.getString(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.FRIEND_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATEDTEXT)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.CREATED_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.CREATED_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE + "2")) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.MESSAGES_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.ICON)) {
 				byte[] b = cursor.getBlob(columnIndex);
@@ -249,6 +233,16 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 				}
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.PROFILE_BG)) {
+				byte[] b = cursor.getBlob(columnIndex);
+				Bitmap bmp = null;
+				if (b != null) {
+					bmp = BitmapFactory.decodeByteArray(b, 0, b.length, sBFOptions);
+					if (bmp != null) {
+						((ImageView) view).setImageBitmap(bmp);
+					}
+				}
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_BG)) {
 				byte[] b = cursor.getBlob(columnIndex);
 				Bitmap bmp = null;
 				if (b != null) {
@@ -335,11 +329,11 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 			Cursor c;
 			SimpleCursorAdapter sca;
 			if (profile[0]) {
-				c = managedQuery(Statuses_styles.CONTENT_URI, new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.FRIEND + " as " + Statuses_styles.FRIEND + "2", Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + " as " + Statuses_styles.MESSAGE + "2", Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, Statuses_styles.WIDGET + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID)}, Statuses_styles.CREATED + " desc");
-				sca = new SimpleCursorAdapter(About.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon, R.id.profile_bg});
+				c = managedQuery(Statuses_styles.CONTENT_URI, new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.FRIEND + " as " + Statuses_styles.FRIEND + "2", Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + " as " + Statuses_styles.MESSAGE + "2", Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}, Statuses_styles.WIDGET + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID)}, Statuses_styles.CREATED + " desc");
+				sca = new SimpleCursorAdapter(About.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon, R.id.profile_bg, R.id.friend_bg});
 			} else {
-				c = managedQuery(Statuses_styles.CONTENT_URI, new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.FRIEND + " as " + Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + " as " + Statuses_styles.MESSAGE + "2", Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON}, Statuses_styles.WIDGET + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID)}, Statuses_styles.CREATED + " desc");
-				sca = new SimpleCursorAdapter(About.this, R.layout.widget_item_noprofile, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.ICON}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.icon});
+				c = managedQuery(Statuses_styles.CONTENT_URI, new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.FRIEND + " as " + Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + " as " + Statuses_styles.MESSAGE + "2", Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.FRIEND_BG}, Statuses_styles.WIDGET + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID)}, Statuses_styles.CREATED + " desc");
+				sca = new SimpleCursorAdapter(About.this, R.layout.widget_item_noprofile, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.ICON, Statuses_styles.FRIEND_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.icon, R.id.friend_bg});
 			}
 			sca.setViewBinder(mViewBinder);
 			setListAdapter(sca);

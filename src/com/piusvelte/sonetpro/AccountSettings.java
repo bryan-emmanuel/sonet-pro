@@ -46,7 +46,8 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 	mCreated_color_value = Sonet.default_created_color,
 	mCreated_textsize_value = Sonet.default_created_textsize,
 	mStatuses_per_account_value = Sonet.default_statuses_per_account,
-	mProfiles_bg_color_value = Sonet.default_message_bg_color;
+	mProfiles_bg_color_value = Sonet.default_message_bg_color,
+	mFriend_bg_color_value = Sonet.default_message_bg_color;
 	private Button mMessages_bg_color;
 	private Button mMessages_color;
 	private Button mMessages_textsize;
@@ -64,6 +65,7 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 	private CheckBox mVibrate;
 	private CheckBox mLights;
 	private Button mProfiles_bg_color;
+	private Button mFriend_bg_color;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,17 +94,18 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 		mVibrate = (CheckBox) findViewById(R.id.vibrate);
 		mLights = (CheckBox) findViewById(R.id.lights);
 		mProfiles_bg_color = (Button) findViewById(R.id.profile_bg_color);
+		mFriend_bg_color = (Button) findViewById(R.id.friend_bg_color);
 
 		int scrollableVersion = 0;
 
 		// get this account/widgets settings, falling back on the defaults...
-		Cursor c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(mAppWidgetId), Long.toString(mAccountId)}, null);
+		Cursor c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(mAppWidgetId), Long.toString(mAccountId)}, null);
 		if (!c.moveToFirst()) {
 			c.close();
-			c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(mAppWidgetId), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+			c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(mAppWidgetId), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 			if (!c.moveToFirst()) {
 				c.close();
-				c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+				c = this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets._ID, Widgets.MESSAGES_COLOR, Widgets.MESSAGES_TEXTSIZE, Widgets.FRIEND_COLOR, Widgets.FRIEND_TEXTSIZE, Widgets.CREATED_COLOR, Widgets.CREATED_TEXTSIZE, Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SCROLLABLE, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 				if (!c.moveToFirst()) {
 					// initialize account settings
 					ContentValues values = new ContentValues();
@@ -141,6 +144,7 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 			mVibrate.setChecked(c.getInt(13) == 1);
 			mLights.setChecked(c.getInt(14) == 1);
 			mProfiles_bg_color_value = c.getInt(15);
+			mFriend_bg_color_value = c.getInt(16);
 		}
 		c.close();
 
@@ -152,6 +156,7 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 		mVibrate.setOnCheckedChangeListener(this);
 		mLights.setOnCheckedChangeListener(this);
 		mProfiles_bg_color.setOnClickListener(this);
+		mFriend_bg_color.setOnClickListener(this);
 
 		if (scrollableVersion == 1) {
 			mMessages_color.setEnabled(false);
@@ -228,6 +233,17 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 		public void colorChanged(int color) {
 			AccountSettings.this.mProfiles_bg_color_value = color;
 			updateDatabase(Widgets.PROFILES_BG_COLOR, color);
+		}
+
+		public void colorUpdate(int color) {}
+	};
+
+	ColorPickerDialog.OnColorChangedListener mFriendBackgroundColorListener =
+		new ColorPickerDialog.OnColorChangedListener() {
+
+		public void colorChanged(int color) {
+			AccountSettings.this.mFriend_bg_color_value = color;
+			updateDatabase(Widgets.FRIEND_BG_COLOR, color);
 		}
 
 		public void colorUpdate(int color) {}
@@ -329,6 +345,9 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 			.show();
 		} else if (v == mProfiles_bg_color) {
 			ColorPickerDialog cp = new ColorPickerDialog(this, mProfileBackgroundColorListener, this.mProfiles_bg_color_value);
+			cp.show();
+		} else if (v == mFriend_bg_color) {
+			ColorPickerDialog cp = new ColorPickerDialog(this, mFriendBackgroundColorListener, this.mFriend_bg_color_value);
 			cp.show();
 		}
 	}

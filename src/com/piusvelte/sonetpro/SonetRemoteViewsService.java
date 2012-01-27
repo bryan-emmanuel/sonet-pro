@@ -118,6 +118,14 @@ class SonetRemoteViewsFactory implements android.widget.RemoteViewsService.Remot
 			fillInIntent.putExtras(extras);
 			views.setOnClickFillInIntent(R.id.item, fillInIntent);
 			
+			byte[] friend_bg = mCursor.getBlob(14);
+			if (friend_bg != null) {
+				Bitmap friendbmp = BitmapFactory.decodeByteArray(friend_bg, 0, friend_bg.length, sBFOptions);
+				if (friendbmp != null) {
+					views.setImageViewBitmap(R.id.friend_bg, friendbmp);
+				}
+			}
+			
 			views.setTextViewText(R.id.friend, mCursor.getString(1));
 			views.setTextColor(R.id.friend, friend_color);
 			views.setFloat(R.id.friend, "setTextSize", friend_textsize);
@@ -170,7 +178,7 @@ class SonetRemoteViewsFactory implements android.widget.RemoteViewsService.Remot
         if (mCursor != null) {
             mCursor.close();
         }
-        mCursor = mContext.getContentResolver().query(Uri.withAppendedPath(Statuses_styles.CONTENT_URI, Integer.toString(mAppWidgetId)), new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, null, null, Statuses_styles.CREATED + " DESC");
+        mCursor = mContext.getContentResolver().query(Uri.withAppendedPath(Statuses_styles.CONTENT_URI, Integer.toString(mAppWidgetId)), new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}, null, null, Statuses_styles.CREATED + " DESC");
 	}
 
 	@Override

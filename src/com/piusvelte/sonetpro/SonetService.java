@@ -317,16 +317,17 @@ public class SonetService extends Service {
 										boolean time24hr = true;
 										int status_bg_color = Sonet.default_message_bg_color;
 										int profile_bg_color = Sonet.default_message_bg_color;
+										int friend_bg_color = Sonet.default_message_bg_color;
 										boolean icon = true;
 										int status_count = Sonet.default_statuses_per_account;
 										int notifications = 0;
-										Cursor c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(widget), Long.toString(accountId)}, null);
+										Cursor c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(widget), Long.toString(accountId)}, null);
 										if (!c.moveToFirst()) {
 											c.close();
-											c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(widget), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+											c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(widget), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 											if (!c.moveToFirst()) {
 												c.close();
-												c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+												c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 												if (!c.moveToFirst()) {
 													// initialize account settings
 													ContentValues v = new ContentValues();
@@ -363,6 +364,7 @@ public class SonetService extends Service {
 												notifications |= Notification.DEFAULT_LIGHTS;
 											}
 											profile_bg_color = c.getInt(7);
+											friend_bg_color = c.getInt(8);
 										}
 										c.close();
 										values.put(Statuses.CREATEDTEXT, Sonet.getCreatedText(created, time24hr));
@@ -376,6 +378,18 @@ public class SonetService extends Service {
 										bg_bmp.compress(Bitmap.CompressFormat.PNG, 100, bg_blob);
 										bg = bg_blob.toByteArray();
 										values.put(Statuses.STATUS_BG, bg);
+										if (bg_bmp != null) {
+											bg_bmp.recycle();
+											bg_bmp = null;
+										}
+										// friend_bg
+										bg_bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
+										bg_canvas = new Canvas(bg_bmp);
+										bg_canvas.drawColor(friend_bg_color);
+										bg_blob = new ByteArrayOutputStream();
+										bg_bmp.compress(Bitmap.CompressFormat.PNG, 100, bg_blob);
+										bg = bg_blob.toByteArray();
+										values.put(Statuses.FRIEND_BG, bg);
 										if (bg_bmp != null) {
 											bg_bmp.recycle();
 											bg_bmp = null;
@@ -623,17 +637,18 @@ public class SonetService extends Service {
 						boolean time24hr = false;
 						int status_bg_color = Sonet.default_message_bg_color;
 						int profile_bg_color = Sonet.default_message_bg_color;
+						int friend_bg_color = Sonet.default_message_bg_color;
 						boolean icon = true;
 						int status_count = Sonet.default_statuses_per_account;
-						Cursor c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{widget, Long.toString(account)}, null);
+						Cursor c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{widget, Long.toString(account)}, null);
 						if (!c.moveToFirst()) {
 							// no account settings
 							c.close();
-							c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{widget, Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+							c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{widget, Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 							if (!c.moveToFirst()) {
 								// no widget settings
 								c.close();
-								c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
+								c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{Integer.toString(AppWidgetManager.INVALID_APPWIDGET_ID), Long.toString(Sonet.INVALID_ACCOUNT_ID)}, null);
 								if (!c.moveToFirst()) {
 									// initialize widget settings
 									ContentValues values = new ContentValues();
@@ -671,6 +686,7 @@ public class SonetService extends Service {
 								notifications |= Notification.DEFAULT_LIGHTS;
 							}
 							profile_bg_color = c.getInt(7);
+							friend_bg_color = c.getInt(8);
 						}
 						c.close();
 						// if no connection, only update the status_bg and icons
@@ -1789,6 +1805,18 @@ public class SonetService extends Service {
 							bg_bmp.recycle();
 							bg_bmp = null;
 						}
+						// friend_bg
+						bg_bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
+						bg_canvas = new Canvas(bg_bmp);
+						bg_canvas.drawColor(friend_bg_color);
+						bg_blob = new ByteArrayOutputStream();
+						bg_bmp.compress(Bitmap.CompressFormat.PNG, 100, bg_blob);
+						bg = bg_blob.toByteArray();
+						values.put(Statuses.FRIEND_BG, bg);
+						if (bg_bmp != null) {
+							bg_bmp.recycle();
+							bg_bmp = null;
+						}
 						// profile_bg
 						bg_bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
 						bg_canvas = new Canvas(bg_bmp);
@@ -2319,8 +2347,9 @@ public class SonetService extends Service {
 				map_friend_bg_clear = {R.id.friend_bg_clear0, R.id.friend_bg_clear1, R.id.friend_bg_clear2, R.id.friend_bg_clear3, R.id.friend_bg_clear4, R.id.friend_bg_clear5, R.id.friend_bg_clear6, R.id.friend_bg_clear7, R.id.friend_bg_clear8, R.id.friend_bg_clear9, R.id.friend_bg_clear10, R.id.friend_bg_clear11, R.id.friend_bg_clear12, R.id.friend_bg_clear13, R.id.friend_bg_clear14, R.id.friend_bg_clear15},
 				map_message_bg_clear = {R.id.message_bg_clear0, R.id.message_bg_clear1, R.id.message_bg_clear2, R.id.message_bg_clear3, R.id.message_bg_clear4, R.id.message_bg_clear5, R.id.message_bg_clear6, R.id.message_bg_clear7, R.id.message_bg_clear8, R.id.message_bg_clear9, R.id.message_bg_clear10, R.id.message_bg_clear11, R.id.message_bg_clear12, R.id.message_bg_clear13, R.id.message_bg_clear14, R.id.message_bg_clear15},
 				map_icon = {R.id.icon0, R.id.icon1, R.id.icon2, R.id.icon3, R.id.icon4, R.id.icon5, R.id.icon6, R.id.icon7, R.id.icon8, R.id.icon9, R.id.icon10, R.id.icon11, R.id.icon12, R.id.icon13, R.id.icon14, R.id.icon15},
-				map_profile_bg = {R.id.profile_bg0, R.id.profile, R.id.profile_bg2, R.id.profile_bg3, R.id.profile_bg4, R.id.profile_bg5, R.id.profile_bg6, R.id.profile_bg7, R.id.profile_bg8, R.id.profile_bg9, R.id.profile_bg10, R.id.profile_bg11, R.id.profile_bg12, R.id.profile_bg13, R.id.profile_bg14, R.id.profile_bg15};
-				Cursor statuses_styles = getContentResolver().query(Uri.withAppendedPath(Statuses_styles.CONTENT_URI, widget), new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, null, null, Statuses_styles.CREATED + " DESC LIMIT " + page + ",-1");
+				map_profile_bg = {R.id.profile_bg0, R.id.profile_bg1, R.id.profile_bg2, R.id.profile_bg3, R.id.profile_bg4, R.id.profile_bg5, R.id.profile_bg6, R.id.profile_bg7, R.id.profile_bg8, R.id.profile_bg9, R.id.profile_bg10, R.id.profile_bg11, R.id.profile_bg12, R.id.profile_bg13, R.id.profile_bg14, R.id.profile_bg15},
+				map_friend_bg = {R.id.friend_bg0, R.id.friend_bg1, R.id.friend_bg2, R.id.friend_bg3, R.id.friend_bg4, R.id.friend_bg5, R.id.friend_bg6, R.id.friend_bg7, R.id.friend_bg8, R.id.friend_bg9, R.id.friend_bg10, R.id.friend_bg11, R.id.friend_bg12, R.id.friend_bg13, R.id.friend_bg14, R.id.friend_bg15};
+				Cursor statuses_styles = getContentResolver().query(Uri.withAppendedPath(Statuses_styles.CONTENT_URI, widget), new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}, null, null, Statuses_styles.CREATED + " DESC LIMIT " + page + ",-1");
 				if (statuses_styles.moveToFirst()) {
 					int count_status = 0;
 					while (!statuses_styles.isAfterLast() && (count_status < map_item.length)) {
@@ -2350,6 +2379,14 @@ public class SonetService extends Service {
 								if (profile_bgbmp != null) {
 									views.setImageViewBitmap(map_profile_bg[count_status], profile_bgbmp);
 								}
+							}
+						}
+						// set friends background
+						byte[] friend_bg = statuses_styles.getBlob(12);
+						if (friend_bg != null) {
+							Bitmap friend_bgbmp = BitmapFactory.decodeByteArray(friend_bg, 0, friend_bg.length, sBFOptions);
+							if (friend_bgbmp != null) {
+								views.setImageViewBitmap(map_friend_bg[count_status], friend_bgbmp);
 							}
 						}
 						// set messages background
@@ -2413,8 +2450,8 @@ public class SonetService extends Service {
 		//provider
 		Uri uri = Uri.withAppendedPath(Statuses_styles.CONTENT_URI, Integer.toString(appWidgetId));
 		replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_DATA_URI, uri.toString());
-		String[] projection = display_profile ? new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}
-		: new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON};
+		String[] projection = display_profile ? new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}
+		: new String[]{Statuses_styles._ID, Statuses_styles.FRIEND, Statuses_styles.PROFILE, Statuses_styles.MESSAGE, Statuses_styles.CREATEDTEXT, Statuses_styles.MESSAGES_COLOR, Statuses_styles.FRIEND_COLOR, Statuses_styles.CREATED_COLOR, Statuses_styles.MESSAGES_TEXTSIZE, Statuses_styles.FRIEND_TEXTSIZE, Statuses_styles.CREATED_TEXTSIZE, Statuses_styles.STATUS_BG, Statuses_styles.ICON, Statuses_styles.FRIEND_BG};
 		String sortOrder = Statuses_styles.CREATED + " DESC";
 		replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_PROJECTION, projection);
 		replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_SORT_ORDER, sortOrder);
@@ -2428,11 +2465,11 @@ public class SonetService extends Service {
 		case 1:
 			if (display_profile) {
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_ITEM_LAYOUT_ID, R.layout.widget_item);
-				int[] cursorIndices = new int[9];
-				int[] viewTypes = new int[9];
-				int[] layoutIds = new int[9];
-				int[] defaultResource = new int[9];
-				boolean[] clickable = new boolean[9];
+				int[] cursorIndices = new int[10];
+				int[] viewTypes = new int[10];
+				int[] layoutIds = new int[10];
+				int[] defaultResource = new int[10];
+				boolean[] clickable = new boolean[10];
 				// R.id.friend_bg_clear
 				cursorIndices[0] = SonetProvider.StatusesStylesColumns.friend.ordinal();
 				viewTypes[0] = LauncherIntent.Extra.Scroll.Types.TEXTVIEW;
@@ -2484,9 +2521,15 @@ public class SonetService extends Service {
 				// R.id.profile_bg
 				cursorIndices[8] = SonetProvider.StatusesStylesColumns.profile_bg.ordinal();
 				viewTypes[8] = LauncherIntent.Extra.Scroll.Types.IMAGEBLOB;
-				layoutIds[8] = R.id.profile;
+				layoutIds[8] = R.id.profile_bg;
 				defaultResource[8] = 0;
 				clickable[8] = false;
+				// R.id.friende_bg
+				cursorIndices[9] = SonetProvider.StatusesStylesColumns.friend_bg.ordinal();
+				viewTypes[9] = LauncherIntent.Extra.Scroll.Types.IMAGEBLOB;
+				layoutIds[9] = R.id.friend_bg;
+				defaultResource[9] = 0;
+				clickable[9] = false;
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_CURSOR_INDICES, cursorIndices);
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_VIEW_TYPES, viewTypes);
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_VIEW_IDS, layoutIds);
@@ -2494,11 +2537,11 @@ public class SonetService extends Service {
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_VIEW_CLICKABLE, clickable);			
 			} else {
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_ITEM_LAYOUT_ID, R.layout.widget_item_noprofile);
-				int[] cursorIndices = new int[7];
-				int[] viewTypes = new int[7];
-				int[] layoutIds = new int[7];
-				int[] defaultResource = new int[7];
-				boolean[] clickable = new boolean[7];
+				int[] cursorIndices = new int[8];
+				int[] viewTypes = new int[8];
+				int[] layoutIds = new int[8];
+				int[] defaultResource = new int[8];
+				boolean[] clickable = new boolean[8];
 				// R.id.friend_bg_clear
 				cursorIndices[0] = SonetProvider.StatusesStylesColumnsNoProfile.friend.ordinal();
 				viewTypes[0] = LauncherIntent.Extra.Scroll.Types.TEXTVIEW;
@@ -2541,6 +2584,12 @@ public class SonetService extends Service {
 				layoutIds[6] = R.id.icon;
 				defaultResource[6] = 0;
 				clickable[6] = false;
+				// R.id.friend_bg
+				cursorIndices[7] = SonetProvider.StatusesStylesColumnsNoProfile.friend_bg.ordinal();
+				viewTypes[7] = LauncherIntent.Extra.Scroll.Types.IMAGEBLOB;
+				layoutIds[7] = R.id.friend_bg;
+				defaultResource[7] = 0;
+				clickable[7] = false;
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_CURSOR_INDICES, cursorIndices);
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_VIEW_TYPES, viewTypes);
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.Mapping.EXTRA_VIEW_IDS, layoutIds);
@@ -2585,6 +2634,8 @@ public class SonetService extends Service {
 				
 				itemViews.setBoundBitmap(R.id.profile_bg, "setImageBitmap", SonetProvider.StatusesStylesColumns.profile_bg.ordinal(), 0);
 
+				itemViews.setBoundBitmap(R.id.friend_bg, "setImageBitmap", SonetProvider.StatusesStylesColumns.friend_bg.ordinal(), 0);
+
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_ITEM_LAYOUT_REMOTEVIEWS, itemViews);
 			} else {
 				BoundRemoteViews itemViews = new BoundRemoteViews(R.layout.widget_item_noprofile);
@@ -2618,6 +2669,8 @@ public class SonetService extends Service {
 				itemViews.setBoundFloat(R.id.message, "setTextSize", SonetProvider.StatusesStylesColumnsNoProfile.messages_textsize.ordinal());
 
 				itemViews.setBoundBitmap(R.id.icon, "setImageBitmap", SonetProvider.StatusesStylesColumnsNoProfile.icon.ordinal(), 0);
+
+				itemViews.setBoundBitmap(R.id.friend_bg, "setImageBitmap", SonetProvider.StatusesStylesColumns.friend_bg.ordinal(), 0);
 
 				replaceDummy.putExtra(LauncherIntent.Extra.Scroll.EXTRA_ITEM_LAYOUT_REMOTEVIEWS, itemViews);
 			}

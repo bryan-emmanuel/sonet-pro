@@ -44,6 +44,7 @@
     <string name="key_head_text">headText</string>
     <string name="message_bg_color">Messages Background Color</string>
     <string name="profile_bg_color">Profiles Background Color</string>
+    <string name="friend_bg_color">Name Background Color</string>
     <string name="key_body_background">bodyBackground</string>
     <string name="message_color">Messages Text Color</string>
     <string name="buttons_textsize">Buttons Text Size</string>

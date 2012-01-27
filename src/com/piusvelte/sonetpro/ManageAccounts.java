@@ -50,6 +50,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -100,9 +101,10 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 		((Button) findViewById(R.id.button_add_account)).setOnClickListener(this);
 		((Button) findViewById(R.id.save)).setOnClickListener(this);
 		
-		WallpaperManager wm = WallpaperManager.getInstance(getApplicationContext());
-		findViewById(R.id.save).getRootView().setBackgroundDrawable(wm.getDrawable());
-		
+		Drawable wp = WallpaperManager.getInstance(getApplicationContext()).getDrawable();
+		if (wp != null) {
+			findViewById(R.id.save).getRootView().setBackgroundDrawable(wp);
+		}
 	}
 
 	private final SimpleCursorAdapter.ViewBinder mViewBinder = new SimpleCursorAdapter.ViewBinder() {
@@ -110,15 +112,11 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 			if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.STATUS_BG)) {
 				Bitmap bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
@@ -134,30 +132,18 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND + "2")) {
 				((TextView) view).setText(cursor.getString(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.FRIEND_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATEDTEXT)) {
 				((TextView) view).setText(cursor.getString(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.CREATED_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.CREATED_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGE + "2")) {
 				((TextView) view).setText(cursor.getString(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_COLOR)) {
-				((TextView) view).setTextColor(cursor.getInt(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.CREATED_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
-				return true;
-			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)) {
-				((TextView) view).setTextSize(cursor.getLong(columnIndex));
+				((TextView) view).setTextSize(cursor.getLong(cursor.getColumnIndex(Statuses_styles.MESSAGES_TEXTSIZE)));
+				((TextView) view).setTextColor(cursor.getInt(cursor.getColumnIndex(Statuses_styles.MESSAGES_COLOR)));
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.ICON)) {
 				Bitmap bmp = BitmapFactory.decodeResource(getResources(), map_icons[cursor.getInt(columnIndex)], sBFOptions);
@@ -166,6 +152,12 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 				}
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.PROFILE_BG)) {
+				Bitmap bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
+				Canvas canvas = new Canvas(bmp);
+				canvas.drawColor(cursor.getInt(columnIndex));
+				((ImageView) view).setImageBitmap(bmp);
+				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Statuses_styles.FRIEND_BG)) {
 				Bitmap bmp = Bitmap.createBitmap(1, 1, Config.ARGB_8888);
 				Canvas canvas = new Canvas(bmp);
 				canvas.drawColor(cursor.getInt(columnIndex));
@@ -180,7 +172,7 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 	@Override
 	protected void onListItemClick(ListView list, final View view, int position, final long id) {
 		super.onListItemClick(list, view, position, id);
-		final CharSequence[] items = {getString(R.string.re_authenticate), getString(R.string.account_settings), getString(((TextView) view.findViewById(R.id.created)).getText().toString().contains("enabled") ? R.string.disable : R.string.enable)};
+		final CharSequence[] items = {getString(R.string.re_authenticate), getString(R.string.account_settings), getString(((TextView) view.findViewById(R.id.message)).getText().toString().contains("enabled") ? R.string.disable : R.string.enable)};
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		dialog.setItems(items, new DialogInterface.OnClickListener() {
 			@Override
@@ -204,7 +196,7 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 					startActivityForResult(new Intent(ManageAccounts.this, AccountSettings.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId).putExtra(Sonet.EXTRA_ACCOUNT_ID, id), RESULT_REFRESH);
 					break;
 				case ENABLE_ID:
-					if (((TextView) view.findViewById(R.id.created)).getText().toString().contains("enabled")) {
+					if (((TextView) view.findViewById(R.id.message)).getText().toString().contains("enabled")) {
 						// disable the account, remove settings and statuses
 						getContentResolver().delete(Widgets.CONTENT_URI, Widgets.ACCOUNT + "=? and " + Widgets.WIDGET + "=?", new String[]{Long.toString(id), Integer.toString(mAppWidgetId)});
 						getContentResolver().delete(Widget_accounts.CONTENT_URI, Widget_accounts.ACCOUNT + "=? and " + Widget_accounts.WIDGET + "=?", new String[]{Long.toString(id), Integer.toString(mAppWidgetId)});
@@ -378,13 +370,17 @@ public class ManageAccounts extends ListActivity implements OnClickListener, Dia
 				"(case when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
 				+ "when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
 				+ "when (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.PROFILES_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
-				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.PROFILE_BG
+				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.PROFILE_BG,
+				
+				"(case when (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + ") is not null then (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=" + TABLE_ACCOUNTS + "." + Accounts._ID + " limit 1)"
+				+ "when (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=" + mAppWidgetId + " and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "when (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1) is not null then (select " + Widgets.FRIEND_BG_COLOR + " from " + TABLE_WIDGETS + " where " + Widgets.WIDGET + "=0 and " + Widgets.ACCOUNT + "=-1 limit 1)"
+				+ "else " + Sonet.default_message_bg_color + " end) as " + Statuses_styles.FRIEND_BG
 		}, null, null, null);
-		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON, Statuses_styles.PROFILE_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon, R.id.profile_bg});
+		SimpleCursorAdapter sca = new SimpleCursorAdapter(ManageAccounts.this, R.layout.widget_item, c, new String[] {Statuses_styles.FRIEND, Statuses_styles.FRIEND + "2", Statuses_styles.MESSAGE, Statuses_styles.MESSAGE + "2", Statuses_styles.STATUS_BG, Statuses_styles.CREATEDTEXT, Statuses_styles.PROFILE, Statuses_styles.ICON, Statuses_styles.PROFILE_BG, Statuses_styles.FRIEND_BG}, new int[] {R.id.friend_bg_clear, R.id.friend, R.id.message_bg_clear, R.id.message, R.id.status_bg, R.id.created, R.id.profile, R.id.icon, R.id.profile_bg, R.id.friend_bg});
 		sca.setViewBinder(mViewBinder);
 		setListAdapter(sca);
 	}
-
 
 	public void onClick(DialogInterface dialog, int which) {
 		mAddingAccount = true;

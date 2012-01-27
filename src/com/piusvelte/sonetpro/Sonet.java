@@ -424,6 +424,7 @@ public class Sonet {
 		public static final String INSTANT_UPLOAD = "instant_upload";
 		public static final String MARGIN = "margin";
 		public static final String PROFILES_BG_COLOR = "profiles_bg_color";
+		public static final String FRIEND_BG_COLOR = "friend_bg_color";
 
 	}
 	
@@ -474,6 +475,7 @@ public class Sonet {
 		public static final String ENTITY = "entity";
 		public static final String FRIEND_OVERRIDE = "friend_override";
 		public static final String PROFILE_BG = "profiles_bg_color";
+		public static final String FRIEND_BG = "friend_bg";
 
 	}
 
@@ -511,6 +513,7 @@ public class Sonet {
 		public static final String ENTITY = "entity";
 		public static final String ESID = "esid";
 		public static final String PROFILE_BG = "profiles_bg_color";
+		public static final String FRIEND_BG = "friend_bg";
 
 	}
 
