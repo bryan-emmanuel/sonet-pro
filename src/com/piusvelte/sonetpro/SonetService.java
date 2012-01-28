@@ -2373,7 +2373,7 @@ public class SonetService extends Service {
 						views.setFloat(map_message_bg_clear[count_status], "setTextSize", messages_textsize);
 						if (display_profile) {
 							// set profiles background
-							byte[] profile_bg = statuses_styles.getBlob(11);
+							byte[] profile_bg = statuses_styles.getBlob(13);
 							if (profile_bg != null) {
 								Bitmap profile_bgbmp = BitmapFactory.decodeByteArray(profile_bg, 0, profile_bg.length, sBFOptions);
 								if (profile_bgbmp != null) {
@@ -2382,7 +2382,7 @@ public class SonetService extends Service {
 							}
 						}
 						// set friends background
-						byte[] friend_bg = statuses_styles.getBlob(12);
+						byte[] friend_bg = statuses_styles.getBlob(14);
 						if (friend_bg != null) {
 							Bitmap friend_bgbmp = BitmapFactory.decodeByteArray(friend_bg, 0, friend_bg.length, sBFOptions);
 							if (friend_bgbmp != null) {
