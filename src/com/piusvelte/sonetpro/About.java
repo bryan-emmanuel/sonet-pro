@@ -147,6 +147,16 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mAppWidgetIds = new int[0];
+		// validate appwidgetids from appwidgetmanager
+		mAppWidgetManager = AppWidgetManager.getInstance(About.this);
+		mAppWidgetIds = Sonet.arrayCat(
+				Sonet.arrayCat(mAppWidgetManager.getAppWidgetIds(new ComponentName(
+						About.this, SonetWidget_4x2.class)),
+						mAppWidgetManager.getAppWidgetIds(new ComponentName(
+								About.this, SonetWidget_4x3.class))),
+								mAppWidgetManager.getAppWidgetIds(new ComponentName(About.this,
+										SonetWidget_4x4.class)));
 		(new WidgetsDataLoader()).execute();
 	}
 
@@ -262,16 +272,6 @@ public class About extends ListActivity implements DialogInterface.OnClickListen
 
 		@Override
 		protected Integer doInBackground(Void... arg0) {
-			mAppWidgetIds = new int[0];
-			// validate appwidgetids from appwidgetmanager
-			mAppWidgetManager = AppWidgetManager.getInstance(About.this);
-			mAppWidgetIds = Sonet.arrayCat(
-					Sonet.arrayCat(mAppWidgetManager.getAppWidgetIds(new ComponentName(
-							About.this, SonetWidget_4x2.class)),
-							mAppWidgetManager.getAppWidgetIds(new ComponentName(
-									About.this, SonetWidget_4x3.class))),
-									mAppWidgetManager.getAppWidgetIds(new ComponentName(About.this,
-											SonetWidget_4x4.class)));
 			int[] removeAppWidgets = new int[0];
 			// remove old widgets that didn't have ids
 			getContentResolver().delete(Widgets.CONTENT_URI, Widgets.WIDGET + "=?", new String[] {""});

@@ -53,7 +53,7 @@ public class Settings extends Activity implements View.OnClickListener, OnChecke
 	mStatuses_per_account_value = Sonet.default_statuses_per_account,
 	mMargin_value = Sonet.default_margin,
 	mProfiles_bg_color_value = Sonet.default_message_bg_color,
-	mFriend_bg_color_value = Sonet.default_message_bg_color;
+	mFriend_bg_color_value = Sonet.default_friend_bg_color;
 	private Button mInterval;
 	private CheckBox mHasButtons;
 	private Button mButtons_bg_color;

@@ -800,7 +800,7 @@ public class SonetProvider extends ContentProvider {
 					+ ",(case when a." + Widgets.FRIEND_BG_COLOR + " is not null then a." + Widgets.FRIEND_BG_COLOR
 					+ " when b." + Widgets.FRIEND_BG_COLOR + " is not null then b. " + Widgets.FRIEND_BG_COLOR
 					+ " when c." + Widgets.FRIEND_BG_COLOR + " is not null then c." + Widgets.FRIEND_BG_COLOR
-					+ " else " + Sonet.default_message_bg_color + " end) as " + Widgets.FRIEND_BG_COLOR
+					+ " else " + Sonet.default_friend_bg_color + " end) as " + Widgets.FRIEND_BG_COLOR
 					+ " from " + TABLE_WIDGETS + " a,"
 					+ TABLE_WIDGETS + " b,"
 					+ TABLE_WIDGETS + " c WHERE b." + Widgets.WIDGET + "=a." + Widgets.WIDGET + " and b." + Widgets.ACCOUNT + "=-1 and c." + Widgets.WIDGET + "=0 and c." + Widgets.ACCOUNT + "=-1;");
@@ -2031,7 +2031,7 @@ public class SonetProvider extends ContentProvider {
 						+ ",(case when a." + Widgets.FRIEND_BG_COLOR + " is not null then a." + Widgets.FRIEND_BG_COLOR
 						+ " when b." + Widgets.FRIEND_BG_COLOR + " is not null then b. " + Widgets.FRIEND_BG_COLOR
 						+ " when c." + Widgets.FRIEND_BG_COLOR + " is not null then c." + Widgets.FRIEND_BG_COLOR
-						+ " else " + Sonet.default_message_bg_color + " end) as " + Widgets.FRIEND_BG_COLOR
+						+ " else " + Sonet.default_friend_bg_color + " end) as " + Widgets.FRIEND_BG_COLOR
 						+ " from " + TABLE_WIDGETS + " a,"
 						+ TABLE_WIDGETS + " b,"
 						+ TABLE_WIDGETS + " c WHERE b." + Widgets.WIDGET + "=a." + Widgets.WIDGET + " and b." + Widgets.ACCOUNT + "=-1 and c." + Widgets.WIDGET + "=0 and c." + Widgets.ACCOUNT + "=-1;");

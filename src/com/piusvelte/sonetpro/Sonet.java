@@ -320,11 +320,11 @@ public class Sonet {
 
 	protected static final int default_interval = 3600000;
 	protected static final int default_buttons_bg_color = 0xAA000000;
-	protected static final int default_buttons_color = -1;
-	protected static final int default_message_bg_color = 0xAA000000;
-	protected static final int default_message_color = -1;
-	protected static final int default_friend_color = -1;
-	protected static final int default_created_color = -1;
+	protected static final int default_buttons_color = 0xFFFFFFFF;
+	protected static final int default_message_bg_color = 0xAAFFFFF;
+	protected static final int default_message_color = 0xFF000000;
+	protected static final int default_friend_color = 0xFFFFFFFF;
+	protected static final int default_created_color = 0xFFFFFFFF;
 	protected static final int default_buttons_textsize = 14;
 	protected static final int default_messages_textsize = 14;
 	protected static final int default_friend_textsize = 14;
@@ -332,6 +332,7 @@ public class Sonet {
 	protected static final int default_statuses_per_account = 10;
 	protected static final boolean default_include_profile = true;
 	protected static final int default_margin = 0;
+	protected static final int default_friend_bg_color = 0xAA000000;
 
 	public Sonet() {
 	}

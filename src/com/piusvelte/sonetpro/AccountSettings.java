@@ -47,7 +47,7 @@ public class AccountSettings extends Activity implements View.OnClickListener, O
 	mCreated_textsize_value = Sonet.default_created_textsize,
 	mStatuses_per_account_value = Sonet.default_statuses_per_account,
 	mProfiles_bg_color_value = Sonet.default_message_bg_color,
-	mFriend_bg_color_value = Sonet.default_message_bg_color;
+	mFriend_bg_color_value = Sonet.default_friend_bg_color;
 	private Button mMessages_bg_color;
 	private Button mMessages_color;
 	private Button mMessages_textsize;

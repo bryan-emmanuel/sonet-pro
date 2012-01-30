@@ -317,7 +317,7 @@ public class SonetService extends Service {
 										boolean time24hr = true;
 										int status_bg_color = Sonet.default_message_bg_color;
 										int profile_bg_color = Sonet.default_message_bg_color;
-										int friend_bg_color = Sonet.default_message_bg_color;
+										int friend_bg_color = Sonet.default_friend_bg_color;
 										boolean icon = true;
 										int status_count = Sonet.default_statuses_per_account;
 										int notifications = 0;
@@ -477,6 +477,15 @@ public class SonetService extends Service {
 							return null;
 						}
 					}).execute(Integer.parseInt(intent.getData().getLastPathSegment()), intent.getIntExtra(ACTION_PAGE_UP, 0));
+				} else {
+					// this might be a widget update from the widget refresh button
+					int appWidgetId;
+					try {
+						appWidgetId = Integer.parseInt(action);
+						putNewUpdate(appWidgetId, 1);
+					} catch (NumberFormatException e) {
+						Log.d(TAG,"unknown action:" + action);
+					}
 				}
 			}
 		}
@@ -637,7 +646,7 @@ public class SonetService extends Service {
 						boolean time24hr = false;
 						int status_bg_color = Sonet.default_message_bg_color;
 						int profile_bg_color = Sonet.default_message_bg_color;
-						int friend_bg_color = Sonet.default_message_bg_color;
+						int friend_bg_color = Sonet.default_friend_bg_color;
 						boolean icon = true;
 						int status_count = Sonet.default_statuses_per_account;
 						Cursor c = SonetService.this.getContentResolver().query(Widgets_settings.CONTENT_URI, new String[]{Widgets.TIME24HR, Widgets.MESSAGES_BG_COLOR, Widgets.ICON, Widgets.STATUSES_PER_ACCOUNT, Widgets.SOUND, Widgets.VIBRATE, Widgets.LIGHTS, Widgets.PROFILES_BG_COLOR, Widgets.FRIEND_BG_COLOR}, Widgets.WIDGET + "=? and " + Widgets.ACCOUNT + "=?", new String[]{widget, Long.toString(account)}, null);
